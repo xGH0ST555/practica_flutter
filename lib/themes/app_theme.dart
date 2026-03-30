@@ -29,7 +29,7 @@ class AppTheme {
       ),
     ),
     listTileTheme: ListTileThemeData(
-      contentPadding: EdgeInsets.all(20),
+      contentPadding: EdgeInsets.all(15),
       titleTextStyle: GoogleFonts.calSans(
         color: Colors.black,
         fontSize: 18,

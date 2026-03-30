@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:practica_1/themes/exports.dart';
-import 'package:practica_1/routes/app_routes.dart';
 
 class Cardproductos extends StatelessWidget {
 
@@ -16,11 +15,13 @@ class Cardproductos extends StatelessWidget {
         Navigator.pushNamed(context, AppRoutes.productVisualizer, arguments: productos);
       },
       child: Card(
+        
         margin: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
         elevation: 0.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+        
         child: Padding(
           padding: EdgeInsets.all(30),
           child: Row(

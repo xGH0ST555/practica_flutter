@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practica_1/screens/cart_screen.dart';
+import 'package:practica_1/screens/profile_screen.dart';
 import '../themes/exports.dart';
 
 
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static final List<Widget> _screens = [
     HomeTab(),
     const CartScreen(),
-    const Center(child: Text('Profile content', style: TextStyle(fontSize: 24))),
+    const ProfileScreen(),
   ];
 
   @override
