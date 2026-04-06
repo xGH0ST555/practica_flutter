@@ -1,1 +1,5 @@
+analyzer:
+  errors:
+    prefer_final_fields: ignore
+    unused_field: ignore
 include: package:flutter_lints/flutter.yaml
