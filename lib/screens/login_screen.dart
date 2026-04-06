@@ -49,8 +49,15 @@ class LoginScreen extends StatefulWidget {
 
     @override
     Widget build(BuildContext context) {
+      final size = MediaQuery.of(context).size;
+
       return Scaffold(
-        body: Column(
+        body: SingleChildScrollView(
+          child: Container(
+          width: size.width,
+          height: size.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ClipPath(
               clipper: BottomCurveClipper(),
@@ -130,6 +137,8 @@ class LoginScreen extends StatefulWidget {
               ),
             ),
           ],
+          ),
+        ),
         ),
       );
     }

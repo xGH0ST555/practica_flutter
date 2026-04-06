@@ -34,7 +34,7 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 - Avatar con imagen de red
 - Botón de logout que regresa a pantalla de login
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ### Estructura del Proyecto
 ```
