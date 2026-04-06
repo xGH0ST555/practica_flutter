@@ -62,11 +62,6 @@ class Cardproductos extends StatelessWidget {
                   '\$${productos['precio']}',
                   style: subtitle,
                 ),
-                SizedBox(height: 10),
-                IconButton(
-                  icon: Icon(Icons.add_shopping_cart, color: Colors.black),
-                  onPressed: () {},
-                ),
               ],
             ), 
           ),

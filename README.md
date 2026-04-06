@@ -2,7 +2,7 @@
 
 Una aplicación Flutter de e-commerce simple con funcionalidades de autenticación, visualización de productos y navegación.
 
-## 📋 Descripción
+## Descripción
 
 Esta aplicación es un proyecto de práctica que implementa una tienda en línea básica con las siguientes características principales:
 - Autenticación de usuarios simulada
@@ -11,7 +11,7 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 - Perfil de usuario con opción de logout
 - Diseño moderno con fuentes personalizadas (Cal Sans)
 
-## 🚀 Características
+## Características
 
 ### Autenticación
 - Pantalla de login con validación básica
@@ -153,7 +153,8 @@ class User {
 #### Product Visualizer (`/product`)
 **Layout Principal:**
 - `Scaffold` con `AppBar` simple
-- `Column` con imagen y detalles
+- `Column` con imagen, detalles y botón de acción en la parte inferior
+- Uso de `Spacer()` para empujar el botón hacia el final de la vista
 
 **Elementos Visuales:**
 - **Imagen del producto**:
@@ -164,6 +165,10 @@ class User {
   - Nombre: Tamaño 24px, negrita
   - Precio: Tamaño 20px, color de acento
   - Descripción: Texto normal con padding
+- **Botón de acción**:
+  - `ElevatedButton.icon` anclado en la parte inferior
+  - Fondo negro, texto blanco
+  - Añade experiencia de carrito aunque la lógica completa de carrito no está implementada aún
 - **Espaciado**: Padding horizontal de 16px
 
 **Responsive Design:**
@@ -211,6 +216,7 @@ class User {
 - Nombre y precio en fila
 - Padding interno de 8px
 - Bordes redondeados
+- Ya no incluye un botón explícito de añadir al carrito en cada card; la interacción se centra en abrir la vista de producto
 
 ### Animaciones y Transiciones
 - **Bottom Navigation**: Transición suave entre pestañas

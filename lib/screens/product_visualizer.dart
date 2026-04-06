@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../themes/exports.dart';
 
 class ProductVisualizer extends StatelessWidget {
   const ProductVisualizer({super.key});
@@ -56,6 +57,25 @@ class ProductVisualizer extends StatelessWidget {
               producto['descripcion'],
               style: const TextStyle(fontSize: 16),
             ),
+            Spacer(),
+             SizedBox( 
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: (){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Producto agregado al carrito'),
+                              backgroundColor: Colors.green,
+                              ),
+                              
+                            );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text('Agregar al Carrito', style: GoogleFonts.calSans()),
+                      ),
+             ),
           ],
         ),
       ),

@@ -3,21 +3,21 @@ class Productos {
   static final List<Map<String, dynamic>> productos = [
     {
       'imagen': 'https://i.pinimg.com/1200x/70/1a/cc/701acc05b9a01095309459d38c570ff2.jpg',
-      'nombre': 'Headphones',
+      'nombre': 'Head phones',
       'precio': 10.0,
-      'descripcion': 'Descripción del producto 1',
+      'descripcion': 'Audifonos de cable northFace sonido de alta calidad',
     },
     {
       'imagen': 'https://i.pinimg.com/1200x/f2/38/5e/f2385ebedff4024e5b1bc8d59854027b.jpg',
       'nombre': 'Seiko Watch',
       'precio': 20.0,
-      'descripcion': 'Descripción del producto 2',
+      'descripcion': 'Reloj de pulsera Seiko con movimiento automático',
     },
     {
       'imagen': 'https://i.pinimg.com/736x/ee/04/d3/ee04d350b409e1f4caf9389275898ef6.jpg',
       'nombre': 'Wallet NY',
       'precio': 30.0,
-      'descripcion': 'Descripción del producto 3',
+      'descripcion': 'Billetera de cuero de estilo urbano',
     },
     {
       'imagen': 'https://i.pinimg.com/736x/24/6f/28/246f289977c4777fc4846791e12e12eb.jpg',
