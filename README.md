@@ -6,10 +6,11 @@ Una aplicación Flutter de e-commerce simple con funcionalidades de autenticaci�
 
 Esta aplicación es un proyecto de práctica que implementa una tienda en línea básica con las siguientes características principales:
 - Autenticación de usuarios simulada
-- Visualización de catálogo de productos
+- Visualización de catálogo de productos desde API externa (dummyjson)
 - Navegación intuitiva con bottom navigation bar
 - Perfil de usuario con opción de logout
 - Diseño moderno con fuentes personalizadas (Cal Sans)
+- Integración con API REST para datos dinámicos
 
 ## Características
 
@@ -20,9 +21,11 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 - Mensajes de error para credenciales incorrectas
 
 ### Catálogo de Productos
-- Lista de productos con imágenes, nombres, precios y descripciones
+- Lista dinámica de productos obtenidos desde dummyjson API
 - Cards interactivas que navegan a vista detallada
-- 8 productos de ejemplo incluidos
+- Indicador de carga mientras se obtienen los datos
+- Manejo de errores de conexión
+- Más de 100 productos disponibles con imágenes, nombres, precios y descripciones
 
 ### Navegación
 - Bottom navigation bar con 3 pestañas (Home, Cart, Profile)
@@ -41,7 +44,7 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 lib/
 ├── main.dart                 # Punto de entrada
 ├── models/
-│   ├── productos.dart        # Modelo de productos
+│   ├── productos.dart        # Modelo de productos y clase Producto
 │   └── user.dart            # Modelo de usuario
 ├── screens/
 │   ├── login_screen.dart    # Pantalla de login
@@ -50,7 +53,8 @@ lib/
 │   ├── cart_screen.dart     # Pantalla del carrito (placeholder)
 │   └── profile_screen.dart  # Pantalla de perfil
 ├── services/
-│   └── auth_service.dart    # Servicio de autenticación
+│   ├── auth_service.dart    # Servicio de autenticación
+│   └── products_service.dart # Servicio para consumir API de productos
 ├── routes/
 │   └── app_routes.dart      # Configuración de rutas
 └── themes/
@@ -62,12 +66,42 @@ lib/
 
 #### Productos
 ```dart
-// Estructura de un producto
-{
-  'imagen': 'URL de imagen',
-  'nombre': 'Nombre del producto',
-  'precio': 99.99,
-  'descripcion': 'Descripción breve'
+class Producto {
+  final int id;
+  final String nombre;
+  final double precio;
+  final String imagen;
+  final String descripcion;
+
+  Producto({
+    required this.id,
+    required this.nombre,
+    required this.precio,
+    required this.imagen,
+    required this.descripcion,
+  });
+
+  // Factory constructor para crear desde JSON de dummyjson API
+  factory Producto.fromJson(Map<String, dynamic> json) {
+    return Producto(
+      id: json['id'] as int,
+      nombre: json['title'] ?? 'Producto sin nombre',
+      precio: (json['price'] as num).toDouble(),
+      imagen: json['thumbnail'] ?? 'https://via.placeholder.com/300',
+      descripcion: json['description'] ?? 'Sin descripción',
+    );
+  }
+
+  // Método para compatibilidad con widgets existentes
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nombre': nombre,
+      'precio': precio,
+      'imagen': imagen,
+      'descripcion': descripcion,
+    };
+  }
 }
 ```
 
@@ -86,6 +120,12 @@ class User {
 - `login(String email, String password)`: Autentica usuario
 - `currentUser`: Getter para usuario actual
 - `logout()`: Cierra sesión
+
+#### ProductsService
+- `getProductos()`: Obtiene todos los productos desde dummyjson API
+- `getProductoById(int id)`: Obtiene un producto específico por ID
+- `searchByCategory(String category)`: Busca productos por categoría
+- Manejo de errores de conexión y timeouts
 
 ## Diseño y UI
  
@@ -260,6 +300,8 @@ class User {
 - **Dart**: Lenguaje de programación
 - **Google Fonts**: Para fuentes personalizadas
 - **Material Design**: Componentes de UI
+- **HTTP Package**: Para consumir APIs REST
+- **dummyjson API**: API externa para datos de productos
 
 ## Dependencias
 
@@ -268,6 +310,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^8.0.2
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -317,21 +360,48 @@ El tema se configura en `lib/themes/app_theme.dart` con:
 - Fuente Cal Sans
 - Estilos personalizados
 
+## API Integration
+
+### dummyjson API
+La aplicación consume datos desde [dummyjson](https://dummyjson.com), una API gratuita que proporciona datos de prueba para desarrollo.
+
+#### Endpoints Utilizados
+- `GET https://dummyjson.com/products` - Obtiene todos los productos
+- `GET https://dummyjson.com/products/{id}` - Obtiene producto específico
+- `GET https://dummyjson.com/products/category/{category}` - Productos por categoría
+
+#### Estructura de Datos
+Los productos incluyen:
+- `id`: Identificador único
+- `title`: Nombre del producto
+- `price`: Precio en dólares
+- `thumbnail`: URL de imagen miniatura
+- `description`: Descripción detallada
+- `category`: Categoría del producto
+- `brand`: Marca del producto
+
+#### Manejo de Estados
+- **Loading**: Indicador circular mientras se cargan datos
+- **Error**: Mensaje de error con ícono cuando falla la conexión
+- **Success**: Lista de productos renderizada dinámicamente
+
 ## Funcionalidades
 
 ### Implementadas
 - Autenticación simulada
-- Visualización de productos
+- Visualización de productos desde API externa
+- Integración con dummyjson API para catálogo dinámico
 - Navegación con bottom bar
 - Perfil de usuario
 - Diseño responsivo
 - Fuentes personalizadas
+- Manejo de estados de carga y errores
 
 ### Pendientes/Limitadas
 - Funcionalidad completa del carrito
-- Persistencia de datos
+- Persistencia de datos local
 - Validación avanzada de formularios
-- Integración con backend real
+- Búsqueda y filtrado de productos por categoría
 
 ## Problemas Conocidos
 
@@ -354,5 +424,5 @@ Este proyecto es de uso educativo y no tiene licencia específica.
 
 ---
 
-**Última actualización**: Abril 2026
+**Última actualización**: Abril 2026  
 **Versión**: 0.1.0+1
