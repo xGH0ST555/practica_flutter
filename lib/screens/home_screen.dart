@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:practica_1/screens/cart_screen.dart';
-import 'package:practica_1/screens/profile_screen.dart';
-import 'package:practica_1/services/products_service.dart';
 import '../themes/exports.dart';
 
 
@@ -137,6 +134,32 @@ class HomeTab extends StatelessWidget {
     );
   }
 }
+
+/*class HomeScreenState extends State<HomeScreen>{
+  late Future<List<Producto>> _productosFuture;
+  List<Producto> _allproductos = [];
+  List<Producto> _filteredproductos = [];
+  final TextEditingController _serchController = TextEditingController();
+  
+  @override
+  void initState(){
+    super.initState();
+    _productosFuture = ProductsService.getProductos();
+  }
+  
+  @override
+   void _filtrar(String query){
+    setState(() {
+      _filteredproductos = _allproductos.where((p) => p.nombre.toLowerCase().contains(query.toLowerCase())).toList();
+    });
+   }
+
+  @override
+  void dispose(){
+    _serchController.dispose();
+    super.dispose();
+  }
+}*/
       
       
 

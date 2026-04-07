@@ -28,7 +28,7 @@ class ProductsService {
   }
 
   /// Obtener un producto específico por ID
-  static Future<Producto> getProductoById(int id) async {
+ /* static Future<Producto> getProductoById(int id) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/products/$id'),
@@ -43,8 +43,7 @@ class ProductsService {
     } catch (e) {
       throw Exception('Error al obtener producto: $e');
     }
-  }
-
+  }*/
   /// Buscar productos por categoría
   static Future<List<Producto>> searchByCategory(String category) async {
     try {
