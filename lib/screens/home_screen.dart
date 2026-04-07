@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practica_1/screens/cart_screen.dart';
 import 'package:practica_1/screens/profile_screen.dart';
+import 'package:practica_1/services/products_service.dart';
 import '../themes/exports.dart';
 
 
@@ -89,10 +90,49 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: Productos.productos.length,
-      itemBuilder: (context, index) {
-        return Cardproductos(productos: Productos.productos[index]);
+    return FutureBuilder(
+      future: ProductsService.getProductos(),
+      builder: (context, snapshot) {
+        //Estado de carga
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        //Error
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, size: 60, color: Colors.red),
+                const SizedBox(height: 16),
+                Text('Error: ${snapshot.error}'),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        }
+        //Éxito - Mostrar productos
+        if (snapshot.hasData) {
+          final productos = snapshot.data!;
+          
+          if (productos.isEmpty) {
+            return const Center(
+              child: Text('No hay productos disponibles'),
+            );
+          }
+          return ListView.builder(
+            itemCount: productos.length,
+            itemBuilder: (context, index) {
+              return Cardproductos(
+                productos: productos[index].toMap(),
+              );
+            },
+          );
+        }
+
+        return const Center(child: Text('No hay datos'));
       },
     );
   }

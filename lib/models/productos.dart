@@ -1,5 +1,45 @@
-class Productos {
+import 'dart:convert';
 
+class Producto {
+  final int id;
+  final String nombre;
+  final double precio;
+  final String imagen;
+  final String descripcion;
+
+  Producto({
+    required this.id,
+    required this.nombre,
+    required this.precio,
+    required this.imagen,
+    required this.descripcion,
+  });
+
+  /// Convertir de JSON a Producto (desde dummyjson)
+  factory Producto.fromJson(Map<String, dynamic> json) {
+    return Producto(
+      id: json['id'] as int,
+      nombre: json['title'] ?? 'Producto sin nombre',
+      precio: (json['price'] as num).toDouble(),
+      imagen: json['thumbnail'] ?? 'https://via.placeholder.com/300',
+      descripcion: json['description'] ?? 'Sin descripción',
+    );
+  }
+
+  /// Convertir a Map para compatibilidad con el Card existente
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nombre': nombre,
+      'precio': precio,
+      'imagen': imagen,
+      'descripcion': descripcion,
+    };
+  }
+}
+
+class Productos {
+  /// Lista estática con productos de ejemplo (mantener como fallback)
   static final List<Map<String, dynamic>> productos = [
     {
       'imagen': 'https://i.pinimg.com/1200x/70/1a/cc/701acc05b9a01095309459d38c570ff2.jpg',
@@ -19,36 +59,5 @@ class Productos {
       'precio': 30.0,
       'descripcion': 'Billetera de cuero de estilo urbano',
     },
-    {
-      'imagen': 'https://i.pinimg.com/736x/24/6f/28/246f289977c4777fc4846791e12e12eb.jpg',
-      'nombre': 'Tabber.',
-      'precio': 30.0,
-      'descripcion': 'Descripción del producto 3',
-    },
-    {
-      'imagen': 'https://i.pinimg.com/736x/f6/5a/83/f65a834373ec54ace725f0a183fe6a4a.jpg',
-      'nombre': 'CAP Casual Pro',
-      'precio': 30.0,
-      'descripcion': 'Descripción del producto 3',
-    },
-     {
-      'imagen': 'https://i.pinimg.com/1200x/55/b6/0d/55b60de0bc89a0dd11c612ee2cc07dd7.jpg',
-      'nombre': 'SOTO BAG',
-      'precio': 30.0,
-      'descripcion': 'Descripción del producto 3',
-    },
-     {
-      'imagen': 'https://i.pinimg.com/1200x/7a/61/9f/7a619f11a705678b4597c84099268c52.jpg',
-      'nombre': 'Cup DEPT',
-      'precio': 30.0,
-      'descripcion': 'Descripción del producto 3',
-    },
-     {
-      'imagen': 'https://i.pinimg.com/736x/94/56/35/94563504859fd73d3f19d7dc29a958ba.jpg',
-      'nombre': 'Hoodie Sun',
-      'precio': 30.0,
-      'descripcion': 'Descripción del producto 3',
-    },
   ];
-
 }
