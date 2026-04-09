@@ -10,30 +10,37 @@ class ProfileScreen extends StatelessWidget {
     final user = AuthService.currentUser;
     
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage('https://i.pinimg.com/736x/ee/04/d3/ee04d350b409e1f4caf9389275898ef6.jpg'),
-                ),
-                title: Text(user?.name ?? 'Usuario', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                subtitle: Text(user?.email ?? 'correo@example.com'),
+      body:ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                      backgroundImage: NetworkImage('https://i.pinimg.com/736x/ee/04/d3/ee04d350b409e1f4caf9389275898ef6.jpg'),
+                      ),
+                      title: Text(user?.name ?? 'Usuario', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      subtitle: Text(user?.email ?? 'correo@example.com'),
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.profileVisualizer);
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.logout, size: 28),
+                    onPressed: () {
+                      AuthService.logout();
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    },
+                  ),
+                ],
               ),
-            ),
-            IconButton(
-              icon: Icon(Icons.logout, size: 28),
-              onPressed: () {
-                AuthService.logout();
-                Navigator.pushReplacementNamed(context, AppRoutes.login);
-              },
-            ),
-          ],
-        ),
-      )
+           ),
+        ],
+      ),
     );
   }
 }

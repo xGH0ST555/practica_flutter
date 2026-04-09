@@ -41,7 +41,8 @@ class LoginScreen extends StatefulWidget {
         //mostrar mensaje de error
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Correo o contraseña incorrectas'),
-          backgroundColor: Colors.red
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 1),
           )
         );
       }
