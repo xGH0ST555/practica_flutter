@@ -33,7 +33,7 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icon(Icons.logout, size: 28),
                     onPressed: () {
                       AuthService.logout();
-                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                      Navigator.pushReplacementNamed(context, AppRoutes.register);
                     },
                   ),
                 ],
