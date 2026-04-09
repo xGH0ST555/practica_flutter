@@ -82,55 +82,118 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: ProductsService.getProductos(),
-      builder: (context, snapshot) {
-        //Estado de carga
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        //Error
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error, size: 60, color: Colors.red),
-                const SizedBox(height: 16),
-                Text('Error: ${snapshot.error}'),
-                const SizedBox(height: 16),
-              ],
-            ),
-          );
-        }
-        //Éxito - Mostrar productos
-        if (snapshot.hasData) {
-          final productos = snapshot.data!;
-          
-          if (productos.isEmpty) {
-            return const Center(
-              child: Text('No hay productos disponibles'),
-            );
-          }
-          return ListView.builder(
-            itemCount: productos.length,
-            itemBuilder: (context, index) {
-              return Cardproductos(
-                productos: productos[index].toMap(),
-              );
-            },
-          );
-        }
+  State<HomeTab> createState() => _HomeTabState();
+}
 
-        return const Center(child: Text('No hay datos'));
-      },
+class _HomeTabState extends State<HomeTab> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TextField(
+            controller: _searchController,
+            style: GoogleFonts.calSans(),
+            decoration: InputDecoration(
+              hintText: 'Buscar productos...',
+              hintStyle: GoogleFonts.calSans(),
+              labelStyle: GoogleFonts.calSans(),
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.black, width: 2.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.black, width: 2.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.black, width: 2.0),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value.toLowerCase();
+              });
+            },
+          ),
+        ),
+        Expanded(
+          child: FutureBuilder(
+            future: ProductsService.getProductos(),
+            builder: (context, snapshot) {
+              //Estado de carga
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              //Error
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error, size: 60, color: Colors.red),
+                      const SizedBox(height: 16),
+                      Text('Error: ${snapshot.error}'),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              }
+              //Éxito - Mostrar productos filtrados
+              if (snapshot.hasData) {
+                final productos = snapshot.data!;
+                
+                final productosFiltrados = productos.where((p) {
+                  return p.nombre.toLowerCase().contains(_searchQuery) ||
+                         p.descripcion.toLowerCase().contains(_searchQuery);
+                }).toList();
+                
+                if (productos.isEmpty) {
+                  return const Center(
+                    child: Text('No hay productos disponibles'),
+                  );
+                }
+
+                if (productosFiltrados.isEmpty) {
+                  return const Center(
+                    child: Text('No se encontraron productos'),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: productosFiltrados.length,
+                  itemBuilder: (context, index) {
+                    return Cardproductos(
+                      productos: productosFiltrados[index].toMap(),
+                    );
+                  },
+                );
+              }
+
+              return const Center(child: Text('No hay datos'));
+            },
+          ),
+        ),
+      ],
     );
   }
 }
