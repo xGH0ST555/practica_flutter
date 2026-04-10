@@ -8,3 +8,4 @@ export 'package:practica_1/services/auth_service.dart';
 export 'package:practica_1/screens/cart_screen.dart';
 export 'package:practica_1/screens/profile_screen.dart';
 export 'package:practica_1/services/products_service.dart';
+export 'package:practica_1/services/validators.dart';

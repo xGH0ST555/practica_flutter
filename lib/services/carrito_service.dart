@@ -45,6 +45,24 @@ class CarritoService {
     await db.delete('carrito', where: 'producto_id = ?', whereArgs: [productoId]);
   }
 
+  // Incrementar cantidad del producto en el carrito
+  static Future<void> incrementarCantidad(int productoId) async {
+    final db = await DatabaseHelper.database;
+    await db.rawUpdate('''
+      UPDATE carrito SET cantidad = cantidad + 1
+      WHERE producto_id = ?
+    ''', [productoId]);
+  }
+
+  // Disminuir cantidad del producto en el carrito
+  static Future<void> disminuirCantidad(int productoId) async {
+    final db = await DatabaseHelper.database;
+    await db.rawUpdate('''
+      UPDATE carrito SET cantidad = cantidad - 1
+      WHERE producto_id = ? AND cantidad > 1
+    ''', [productoId]);
+  }
+
   // Vaciar carrito completo
   static Future<void> vaciar() async {
     final db = await DatabaseHelper.database;

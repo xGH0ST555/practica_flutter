@@ -8,12 +8,12 @@ import 'package:practica_1/screens/profile_screen.dart';
 import 'package:practica_1/screens/profille_visualizer.dart';
 
 class AppRoutes {
- static String register = '/';
- static String login = '/login';
- static String home = '/home';
+ static String register          = '/';
+ static String login             = '/login';
+ static String home              = '/home';
  static String productVisualizer = '/product';
- static String cart = '/cart';
- static String profile = '/profile';
+ static String cart              = '/cart';
+ static String profile           = '/profile';
  static String profileVisualizer = '/profileVisualizer';
 
 

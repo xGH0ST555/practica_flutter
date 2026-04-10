@@ -16,9 +16,11 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 
 ### Autenticación
 - Pantalla de login con validación básica
+- Pantalla de registro de nuevos usuarios
 - Usuarios de prueba hardcodeados
 - Persistencia de sesión durante la ejecución
 - Mensajes de error para credenciales incorrectas
+- Base de datos SQLite para almacenamiento de usuarios
 
 ### Catálogo de Productos
 - Lista dinámica de productos obtenidos desde dummyjson API
@@ -27,14 +29,21 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 - Manejo de errores de conexión
 - Más de 100 productos disponibles con imágenes, nombres, precios y descripciones
 
+### Carrito de Compras
+- Gestión de productos en carrito con SQLite
+- Agregar productos al carrito
+- Actualizar cantidades
+
 ### Navegación
 - Bottom navigation bar con 3 pestañas (Home, Cart, Profile)
 - Rutas nombradas para navegación consistente
 - Transiciones suaves entre pantallas
+- Pantalla de login accesible desde registro
 
 ### Perfil de Usuario
 - Visualización de información del usuario autenticado
 - Avatar con imagen de red
+- Dos vistas de perfil disponibles
 - Botón de logout que regresa a pantalla de login
 
 ## Arquitectura
@@ -43,18 +52,24 @@ Esta aplicación es un proyecto de práctica que implementa una tienda en línea
 ```
 lib/
 ├── main.dart                 # Punto de entrada
+├── db/
+│   └── database_helper.dart  # Helper para SQLite database
 ├── models/
 │   ├── productos.dart        # Modelo de productos y clase Producto
 │   └── user.dart            # Modelo de usuario
 ├── screens/
 │   ├── login_screen.dart    # Pantalla de login
+│   ├── registrar_usuario.dart # Pantalla de registro de usuario
 │   ├── home_screen.dart     # Pantalla principal con navegación
 │   ├── product_visualizer.dart # Vista detallada de producto
-│   ├── cart_screen.dart     # Pantalla del carrito (placeholder)
-│   └── profile_screen.dart  # Pantalla de perfil
+│   ├── cart_screen.dart     # Pantalla del carrito
+│   ├── profile_screen.dart  # Pantalla de perfil
+│   └── profille_visualizer.dart # Visualizador alternativo de perfil
 ├── services/
 │   ├── auth_service.dart    # Servicio de autenticación
-│   └── products_service.dart # Servicio para consumir API de productos
+│   ├── products_service.dart # Servicio para consumir API de productos
+│   ├── carrito_service.dart # Servicio para gestión del carrito
+│   └── usuario_service.dart # Servicio para gestión de usuarios
 ├── routes/
 │   └── app_routes.dart      # Configuración de rutas
 └── themes/
@@ -127,10 +142,21 @@ class User {
 - `searchByCategory(String category)`: Busca productos por categoría
 - Manejo de errores de conexión y timeouts
 
+#### CarritoService
+- `agregar(Producto producto)`: Agrega producto al carrito
+- `obtenerCarrito()`: Obtiene lista de productos en carrito
+- `actualizarCantidad(int productoId, int cantidad)`: Actualiza cantidad de producto
+- `eliminarProducto(int productoId)`: Elimina producto del carrito
+
+#### UsuarioService
+- `insertar(User user)`: Inserta nuevo usuario en base de datos
+- `register(String name, String email, String password)`: Registra usuario con validación
+- `login(String email, String password)`: Autentica usuario desde base de datos
+
 ## Diseño y UI
  
 ### Tema General
-- **Tema oscuro** con `ColorScheme.dark()` y color primario negro
+- **Tema personalizado** con color primario negro y elementos claros
 - **Fuente personalizada**: Cal Sans (Google Fonts) aplicada a todos los textos
 - **Bordes redondeados**: Radio de 12px en inputs y botones
 - **Espaciado consistente**: Padding de 16px en contenedores principales
@@ -164,10 +190,21 @@ class User {
   - `ElevatedButton` de ancho completo
   - Fondo negro, texto blanco
   - Fuente Cal Sans
+- **Enlace a registro**: Texto clickable para navegar a pantalla de registro
 
 **Animaciones y Estados:**
 - Toggle de visibilidad de contraseña con cambio de ícono
 - `SnackBar` rojo para errores de login
+
+#### Registrar Usuario Screen (`/`)
+**Layout Principal:**
+- Formulario de registro con campos para nombre, email y contraseña
+- Diseño similar al login con imagen de fondo
+
+**Elementos Visuales:**
+- Campos de texto con validación
+- Botón de registro
+- Enlace para volver al login
 
 #### Home Screen (`/`)
 **Layout Principal:**
@@ -248,6 +285,18 @@ class User {
 - Texto: Cal Sans para consistencia
 - Icono: Tema por defecto de Material Design
 
+#### Profille Visualizer (`/profileVisualizer`)
+**Layout Principal:**
+- `Scaffold` con imagen de fondo curvada
+- `Stack` para posicionar elementos
+- Avatar centrado sobre la imagen de fondo
+
+**Elementos Visuales:**
+- **Imagen de fondo**: Imagen de red con `ClipPath` personalizado
+- **Avatar**: `CircleAvatar` grande con borde blanco
+- **Nombre del usuario**: Texto centrado debajo del avatar
+- Diseño visual alternativo al perfil estándar
+
 ### Componentes Reutilizables
 
 #### Cardproductos
@@ -298,6 +347,7 @@ class User {
 
 - **Flutter**: Framework principal
 - **Dart**: Lenguaje de programación
+- **SQLite**: Base de datos local
 - **Google Fonts**: Para fuentes personalizadas
 - **Material Design**: Componentes de UI
 - **HTTP Package**: Para consumir APIs REST
@@ -311,6 +361,8 @@ dependencies:
     sdk: flutter
   google_fonts: ^8.0.2
   http: ^1.2.0
+  sqflite: ^2.3.2
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
@@ -348,11 +400,13 @@ dev_dependencies:
 
 ### Rutas
 Las rutas están definidas en `lib/routes/app_routes.dart`:
+- `/`: Pantalla de registro de usuario
 - `/login`: Pantalla de login
-- `/`: Pantalla principal (Home)
+- `/home`: Pantalla principal (Home)
 - `/product`: Visualizador de producto
 - `/cart`: Carrito de compras
 - `/profile`: Perfil de usuario
+- `/profileVisualizer`: Visualizador alternativo de perfil
 
 ### Tema
 El tema se configura en `lib/themes/app_theme.dart` con:
@@ -388,20 +442,21 @@ Los productos incluyen:
 ## Funcionalidades
 
 ### Implementadas
-- Autenticación simulada
+- Autenticación simulada y registro de usuarios
 - Visualización de productos desde API externa
 - Integración con dummyjson API para catálogo dinámico
+- Gestión completa del carrito con persistencia en SQLite
 - Navegación con bottom bar
-- Perfil de usuario
+- Perfil de usuario con dos vistas
 - Diseño responsivo
 - Fuentes personalizadas
 - Manejo de estados de carga y errores
+- Base de datos SQLite para usuarios y carrito
 
 ### Pendientes/Limitadas
-- Funcionalidad completa del carrito
-- Persistencia de datos local
-- Validación avanzada de formularios
-- Búsqueda y filtrado de productos por categoría
+- Búsqueda y filtrado avanzado de productos por categoría
+- Validación más robusta de formularios
+- Notificaciones push
 
 ## Problemas Conocidos
 
@@ -424,5 +479,5 @@ Este proyecto es de uso educativo y no tiene licencia específica.
 
 ---
 
-**Última actualización**: Abril 2026  
+**Última actualización**: Abril 10, 2026  
 **Versión**: 0.1.0+1

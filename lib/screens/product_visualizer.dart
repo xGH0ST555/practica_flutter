@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:practica_1/services/carrito_service.dart';
 import '../themes/exports.dart';
 
-class ProductVisualizer extends StatelessWidget {
+class ProductVisualizer extends StatefulWidget {
   const ProductVisualizer({super.key});
+
+  @override
+  State<ProductVisualizer> createState() => _ProductVisualizerState();
 
   @override
   Widget build(BuildContext context) {
@@ -59,17 +63,25 @@ class ProductVisualizer extends StatelessWidget {
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 24),
-               SizedBox( 
+               SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: (){
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Producto agregado al carrito'),
-                                  backgroundColor: Colors.green,
-                                  duration: Duration(seconds: 1),
-                                ),
-                              );
+                          onPressed: () async {
+                            final productoAgregar = Producto(
+                              id: producto['id'] as int,
+                              nombre: producto['nombre'] as String,
+                              precio: (producto['precio'] as num).toDouble(),
+                              imagen: producto['imagen'] as String,
+                              descripcion: producto['descripcion'] as String,
+                            );
+                            await CarritoService.agregar(productoAgregar);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Producto agregado al carrito'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,

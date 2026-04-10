@@ -9,6 +9,8 @@ class RegistrarUsuario extends StatefulWidget {
 }
 
 class _RegistrarUsuarioState extends State<RegistrarUsuario> {
+  final _formKey = GlobalKey<FormState>();
+
   final _nombreController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -27,41 +29,13 @@ class _RegistrarUsuarioState extends State<RegistrarUsuario> {
   }
 
   Future<void> _registrar() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     final nombre = _nombreController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
-
-    // Validaciones
-    if (nombre.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor completa todos los campos'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Las contraseñas no coinciden'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('La contraseña debe tener al menos 6 caracteres'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
 
     setState(() => _isLoading = true);
 
@@ -114,11 +88,14 @@ class _RegistrarUsuarioState extends State<RegistrarUsuario> {
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  // Nombre
-                  TextField(
-                    controller: _nombreController,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    // Nombre
+                    TextFormField(
+                      controller: _nombreController,
+                      validator: Validators.nameValidator,
                     style: GoogleFonts.calSans(),
                     decoration: InputDecoration(
                       labelText: 'Nombre',
@@ -131,8 +108,9 @@ class _RegistrarUsuarioState extends State<RegistrarUsuario> {
                   ),
                   SizedBox(height: 16),
                   // Email
-                  TextField(
+                  TextFormField(
                     controller: _emailController,
+                    validator: Validators.emailValidator,
                     keyboardType: TextInputType.emailAddress,
                     style: GoogleFonts.calSans(),
                     decoration: InputDecoration(
@@ -146,8 +124,9 @@ class _RegistrarUsuarioState extends State<RegistrarUsuario> {
                   ),
                   SizedBox(height: 16),
                   // Contraseña
-                  TextField(
+                  TextFormField(
                     controller: _passwordController,
+                    validator: Validators.passwordValidator,
                     obscureText: _obscurePassword,
                     style: GoogleFonts.calSans(),
                     decoration: InputDecoration(
@@ -170,8 +149,9 @@ class _RegistrarUsuarioState extends State<RegistrarUsuario> {
                   ),
                   SizedBox(height: 16),
                   // Confirmar Contraseña
-                  TextField(
+                  TextFormField(
                     controller: _confirmPasswordController,
+                    validator: (value) => Validators.confirmPasswordValidator(value, _passwordController.text),
                     obscureText: _obscureConfirmPassword,
                     style: GoogleFonts.calSans(),
                     decoration: InputDecoration(
@@ -239,6 +219,7 @@ class _RegistrarUsuarioState extends State<RegistrarUsuario> {
                   SizedBox(height: 20),
                 ],
               ),
+            ),
             ),
           ],
         ),

@@ -24,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -36,6 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    
+
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -97,13 +103,16 @@ class _LoginScreenState extends State<LoginScreen> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Email
-                      TextField(
+                      TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
+                        validator: Validators.emailValidator,
                         style: GoogleFonts.calSans(),
                         decoration: InputDecoration(
                           labelText: 'Correo',
@@ -116,9 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: 16),
                       // Contraseña
-                      TextField(
+                      TextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
+                        validator: Validators.passwordValidator,
                         style: GoogleFonts.calSans(),
                         decoration: InputDecoration(
                           labelText: 'Contraseña',
@@ -154,6 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
+              ),
               ),
             ],
           ),

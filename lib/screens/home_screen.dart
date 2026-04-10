@@ -156,7 +156,7 @@ class _HomeTabState extends State<HomeTab> {
                       const SizedBox(height: 16),
                     ],
                   ),
-                );
+                 );
               }
               //Éxito - Mostrar productos filtrados
               if (snapshot.hasData) {
