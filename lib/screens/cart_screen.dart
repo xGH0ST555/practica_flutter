@@ -27,7 +27,7 @@ class _CarritoSc extends State<CartScreen> {
 
   Future<void> _incrementar(int productoId) async {
     await CarritoService.incrementarCantidad(productoId);
-    await _refreshCarrito();
+    
   }
 
   Future<void> _disminuir(int productoId, int cantidad) async {
@@ -41,7 +41,7 @@ class _CarritoSc extends State<CartScreen> {
 
   Future<void> _vaciarCarrito() async {
     await CarritoService.vaciar();
-    await _refreshCarrito();
+    
   }
 
   @override

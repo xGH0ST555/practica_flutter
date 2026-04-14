@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practica_1/services/carrito_service.dart';
+import '../models/productos.dart';
 import '../themes/exports.dart';
 
 class ProductVisualizer extends StatefulWidget {
@@ -7,7 +8,9 @@ class ProductVisualizer extends StatefulWidget {
 
   @override
   State<ProductVisualizer> createState() => _ProductVisualizerState();
+}
 
+class _ProductVisualizerState extends State<ProductVisualizer> {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> producto = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
