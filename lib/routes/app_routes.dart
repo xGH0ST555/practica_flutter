@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:practica_1/screens/home_screen.dart';
 import 'package:practica_1/screens/login_screen.dart';
 import 'package:practica_1/screens/registrar_usuario.dart';
@@ -8,13 +8,13 @@ import 'package:practica_1/screens/profile_screen.dart';
 import 'package:practica_1/screens/profille_visualizer.dart';
 
 class AppRoutes {
- static String register          = '/';
- static String login             = '/login';
- static String home              = '/home';
- static String productVisualizer = '/product';
- static String cart              = '/cart';
- static String profile           = '/profile';
- static String profileVisualizer = '/profileVisualizer';
+  static const String register          = '/';           // ← const
+  static const String login             = '/login';
+  static const String home              = '/home';
+  static const String productVisualizer = '/product';
+  static const String cart              = '/cart';
+  static const String profile           = '/profile';
+  static const String profileVisualizer = '/profileVisualizer';
 
 
 

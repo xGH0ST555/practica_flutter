@@ -26,24 +26,6 @@ class ProductsService {
       throw Exception('Error de conexión: $e');
     }
   }
-
-  /// Obtener un producto específico por ID
- /* static Future<Producto> getProductoById(int id) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/products/$id'),
-      ).timeout(const Duration(seconds: 30));
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        return Producto.fromJson(jsonData);
-      } else {
-        throw Exception('Producto no encontrado');
-      }
-    } catch (e) {
-      throw Exception('Error al obtener producto: $e');
-    }
-  }*/
   /// Buscar productos por categoría
   static Future<List<Producto>> searchByCategory(String category) async {
     try {

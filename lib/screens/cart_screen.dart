@@ -36,7 +36,6 @@ class _CarritoSc extends State<CartScreen> {
     } else {
       await CarritoService.disminuirCantidad(productoId);
     }
-    await _refreshCarrito();
   }
 
   Future<void> _vaciarCarrito() async {
@@ -47,18 +46,6 @@ class _CarritoSc extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Carrito'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            tooltip: 'Vaciar carrito',
-            onPressed: () async {
-              await _vaciarCarrito();
-            },
-          ),
-        ],
-      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _carritoFuture,
         builder: (context, snapshot) {

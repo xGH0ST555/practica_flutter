@@ -66,4 +66,44 @@ class UsuarioService {
     await db.delete('usuarios', where: 'email = ?', whereArgs: [email]);
     return 1;
   }
+
+  //Actualizar foto de perfil del usuario
+  static Future<void> actualizarFotoPerfil(String email, String rutaFoto) async {
+    final db = await DatabaseHelper.database;
+    await db.update(
+      'usuarios',
+      {'foto_perfil': rutaFoto},
+      where: 'email = ?',
+      whereArgs: [email]
+    );
+  }
+  //Actualizar fondo de perfil del usuario
+  static Future<void> actualizarFondoPerfil(String email, String rutaFondo) async {
+    final db = await DatabaseHelper.database;
+    await db.update(
+      'usuarios',
+      {'fondo_perfil': rutaFondo},
+      where: 'email = ?',
+      whereArgs: [email]
+    );
+  }
+  //obtener usuario actualizado (por email)
+  static Future<User?> obtenerUsuario(String email) async {
+    final db = await DatabaseHelper.database;
+    final result = await db.query(
+      'usuarios',
+      where: 'email = ?',
+      whereArgs: [email]
+    );
+    if(result.isNotEmpty){
+      return User(
+        name: result.first['nombre'] as String,
+        email: result.first['email'] as String,
+        password: result.first['password'] as String,
+        fotoPerfil: result.first['foto_perfil'] as String?,
+        fondoPerfil: result.first['fondo_perfil'] as String?
+      );
+    }
+    return null;
+  }
 }
