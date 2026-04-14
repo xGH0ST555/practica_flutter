@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: size.width,
           height: size.height,
           child: Column(

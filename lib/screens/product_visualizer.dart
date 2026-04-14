@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:practica_1/services/carrito_service.dart';
-import '../models/productos.dart';
 import '../themes/exports.dart';
 
 class ProductVisualizer extends StatefulWidget {
@@ -29,7 +28,7 @@ class _ProductVisualizerState extends State<ProductVisualizer> {
                 child: Container(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: Container(
+                  child: SizedBox(
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height * 0.4,
                     child: Image.network(
