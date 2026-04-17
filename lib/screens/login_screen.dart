@@ -161,6 +161,30 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text('Ingresar', style: GoogleFonts.calSans()),
                         ),
                       ),
+                      SizedBox(height: 10),
+                  // Texto para ir a registro
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '¿No tienes una cuenta? ',
+                        style: GoogleFonts.calSans(),
+                      ),
+                      GestureDetector(
+                        onTap: () =>
+                            Navigator.pushReplacementNamed(context, AppRoutes.register),
+                        child: Text(
+                          'Regístrate',
+                          style: GoogleFonts.calSans(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
                     ],
                   ),
                 ),
