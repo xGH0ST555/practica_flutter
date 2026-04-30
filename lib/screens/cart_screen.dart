@@ -27,7 +27,7 @@ class _CarritoSc extends State<CartScreen> {
 
   Future<void> _incrementar(int productoId) async {
     await CarritoService.incrementarCantidad(productoId);
-    
+    await _refreshCarrito();
   }
 
   Future<void> _disminuir(int productoId, int cantidad) async {
@@ -36,11 +36,12 @@ class _CarritoSc extends State<CartScreen> {
     } else {
       await CarritoService.disminuirCantidad(productoId);
     }
+    await _refreshCarrito();
   }
 
   Future<void> _vaciarCarrito() async {
     await CarritoService.vaciar();
-    
+    await _refreshCarrito();
   }
 
   @override
@@ -49,7 +50,7 @@ class _CarritoSc extends State<CartScreen> {
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _carritoFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
