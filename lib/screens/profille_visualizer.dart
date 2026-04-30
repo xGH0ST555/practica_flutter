@@ -42,9 +42,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
 
     try {
       final user = AuthService.currentUser;
-      print("Imprimiendo usuario: $user");
       if (user == null) {
-        print("Usuario es nulo");
         if (mounted) {
           Navigator.pushReplacementNamed(context, AppRoutes.login);
         }
@@ -59,10 +57,8 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
           _fondoPerfil = usuarioActualizado?.fondoPerfil;
           _isLoading = false;
         });
-        print("Datos cargados con éxito");
       }
     } catch (e) {
-      print("ERROR CARGANDO DATOS: $e");
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -76,72 +72,76 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
 
   // Selecciona foto desde la galeria
   Future<void> _seleccionarFoto() async {
-    if (_isPickerActive) return;
+  if (_isPickerActive) return;
 
-    setState(() => _isPickerActive = true);
-    try {
-      final XFile? imagen = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+  setState(() => _isPickerActive = true);
+  try {
+    final XFile? imagen = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
 
-      if (imagen != null) {
-        final user = AuthService.currentUser;
-        await UsuarioService.actualizarFotoPerfil(user!.email, imagen.path);
-        if (mounted) {
-          setState(() => _fotoPerfil = imagen.path);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Foto de perfil actualizada')),
-          );
-        }
-      }
-    } catch (e) {
+    if (imagen != null) {
+      final user = AuthService.currentUser;
+      await UsuarioService.actualizarFotoPerfil(user!.email, imagen.path);
       if (mounted) {
+        setState(() => _fotoPerfil = imagen.path);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al seleccionar la imagen')),
+          const SnackBar(content: Text('Foto de perfil actualizada')),
         );
       }
-    } finally {
-      if (mounted) {
-        setState(() => _isPickerActive = false);
-      }
     }
-  }
-
-  // Selecciona fondo personalizado desde la galeria
-  Future<void> _seleccionarFondoGaleria() async {
-    if (_isPickerActive) return;
-    setState(() => _isPickerActive = true);
-
-    try {
-      final XFile? imagen = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al seleccionar la imagen')),
       );
-
-      if (imagen != null) {
-        final user = AuthService.currentUser;
-        await UsuarioService.actualizarFondoPerfil(user!.email, imagen.path);
-        if (mounted) {
-          setState(() => _fondoPerfil = imagen.path);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fondo de perfil actualizado')),
-          );
-          if (Navigator.canPop(context)) Navigator.pop(context);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al seleccionar la imagen')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isPickerActive = false);
-      }
+    }
+  } finally {
+    if (mounted) {
+      setState(() => _isPickerActive = false);
     }
   }
+}
+
+// Similar para _seleccionarFondoGaleria:
+Future<void> _seleccionarFondoGaleria() async {
+  if (_isPickerActive) return;
+  setState(() => _isPickerActive = true);
+
+  try {
+    final XFile? imagen = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (imagen != null) {
+      final user = AuthService.currentUser;
+      await UsuarioService.actualizarFondoPerfil(user!.email, imagen.path);
+      if (mounted) {
+        setState(() => _fondoPerfil = imagen.path);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fondo de perfil actualizado')),
+        );
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted && Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        });
+      }
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al seleccionar la imagen')),
+      );
+    }
+  } finally {
+    if (mounted) {
+      setState(() => _isPickerActive = false);
+    }
+  }
+}
 
   // seleccionador de fondos
   void _mostrarSelectorFondos() {
@@ -150,7 +150,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (ctx) {
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -165,7 +165,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _fondos.length + 1,
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  separatorBuilder: (context, index) => const SizedBox(width: 10),
                   itemBuilder: (context, index) {
                     // OPCIÓN: GALERÍA (PERSONALIZADO)
                     if (index == _fondos.length) {
@@ -214,16 +214,16 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
 
                         try {
                           await UsuarioService.actualizarFondoPerfil(user.email, fondo);
-                          if (mounted) {
+                          if (ctx.mounted) {
                             setState(() => _fondoPerfil = fondo);
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            ScaffoldMessenger.of(ctx).showSnackBar(
                               const SnackBar(content: Text('Fondo actualizado')),
                             );
-                            if (Navigator.canPop(context)) Navigator.pop(context);
+                            if (Navigator.canPop(ctx)) Navigator.pop(ctx);
                           }
                         } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
+                          if (ctx.mounted) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
                               SnackBar(content: Text('Error al actualizar fondo: $e')),
                             );
                           }
@@ -264,7 +264,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
     if (_fondoPerfil == null || _fondoPerfil!.isEmpty) {
       // Fondo por defecto
       return Image.network(
-        'https://i.pinimg.com/1200x/62/57/06/625706d04942c225e084551a24cf3973.jpg',
+        'https://i.pinimg.com/1200x/15/e9/46/15e946aa33ba278a6d60b479b2b99a2f.jpg',
         width: double.infinity,
         height: 250,
         fit: BoxFit.cover,
@@ -317,7 +317,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
     if (_fotoPerfil == null || _fotoPerfil!.isEmpty) {
       // Foto por defecto
       return const NetworkImage(
-          'https://i.pinimg.com/1200x/83/6a/44/836a44d9f9362d4a993fe023c2f3cd50.jpg');
+          'https://i.pinimg.com/1200x/80/ab/ae/80abaeeea9d3a1a161d3ff7067cef58a.jpg');
     }
 
     // Si es una ruta de archivo local
@@ -343,7 +343,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
 
     if (user == null) {
       Future.microtask(() {
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pushReplacementNamed(context, AppRoutes.login);
         }
       });
@@ -380,10 +380,28 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
                 top: 20,
                 right: 20,
                 child: FloatingActionButton(
+                  heroTag: 'change_bg_btn',
                   mini: true,
                   backgroundColor: Colors.white,
                   onPressed: _mostrarSelectorFondos,
                   child: const Icon(Icons.image, color: Colors.deepPurple),
+                ),
+              ),
+
+              // Botón regresar
+              Positioned(
+                top: 20,
+                left: 20,
+                child: FloatingActionButton(
+                  heroTag: 'back_btn',
+                  mini: true,
+                  backgroundColor: Colors.white,
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Icon(Icons.arrow_back, color: Colors.deepPurple),
                 ),
               ),
 

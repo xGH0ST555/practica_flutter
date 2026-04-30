@@ -66,7 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
+        onTap: (
+          index) {
           setState(() {
             _previousIndex = _currentIndex;
             _currentIndex = index;
