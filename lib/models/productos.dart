@@ -5,6 +5,7 @@ class Producto {
   final double precio;
   final String imagen;
   final String descripcion;
+  final List<String> imagenes;
 
   Producto({
     required this.id,
@@ -12,16 +13,29 @@ class Producto {
     required this.precio,
     required this.imagen,
     required this.descripcion,
+    this.imagenes = const [],
   });
 
   /// Convertir de JSON a Producto (desde dummyjson)
   factory Producto.fromJson(Map<String, dynamic> json) {
+    final List<String> images = [];
+    if (json['images'] != null && json['images'] is List) {
+      images.addAll(
+        (json['images'] as List).cast<String>(),
+      );
+    }
+    // Si no hay imágenes, agregar al menos la thumbnail
+    if (images.isEmpty && json['thumbnail'] != null) {
+      images.add(json['thumbnail'] as String);
+    }
+
     return Producto(
       id: json['id'] as int,
       nombre: json['title'] ?? 'Producto sin nombre',
       precio: (json['price'] as num).toDouble(),
       imagen: json['thumbnail'] ?? 'https://via.placeholder.com/300',
       descripcion: json['description'] ?? 'Sin descripción',
+      imagenes: images,
     );
   }
 
@@ -33,6 +47,7 @@ class Producto {
       'precio': precio,
       'imagen': imagen,
       'descripcion': descripcion,
+      'imagenes': imagenes,
     };
   }
 }

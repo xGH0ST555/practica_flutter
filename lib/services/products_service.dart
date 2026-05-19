@@ -9,7 +9,7 @@ class ProductsService {
   static Future<List<Producto>> getProductos() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/products'),
+        Uri.parse('$baseUrl/products?limit=100'),
       ).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practica_1/services/carrito_service.dart';
+import 'package:practica_1/widgets/fake_3d_visualizer.dart';
 import '../themes/exports.dart';
 
 class ProductVisualizer extends StatefulWidget {
@@ -26,27 +27,13 @@ class _ProductVisualizerState extends State<ProductVisualizer> {
             children: [
               Center(
                 child: Container(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: SizedBox(
-                    width: double.infinity,
+                  child: Fake3DVisualizer(
+                    images: (producto['imagenes'] as List<String>?)?.isNotEmpty == true
+                        ? (producto['imagenes'] as List<String>)
+                        : [producto['imagen'] as String],
                     height: MediaQuery.of(context).size.height * 0.4,
-                    child: Image.network(
-                      producto['imagen'],
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const SizedBox(
-                          height: 300,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.broken_image, size: 300, color: Colors.grey);
-                      },
-                    ),
+                    width: double.infinity,
                   ),
-                ),
                 ),
               ),
               const SizedBox(height: 16),

@@ -20,7 +20,7 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
     'assets/fondos/fondo1.jpg',
     'assets/fondos/fondo2.jpg',
     'assets/fondos/fondo3.jpg',
-    'assets/fondos/fondo4.jpg'
+    'assets/fondos/fondo4.jpg',
   ];
 
   String? _fotoPerfil;
@@ -49,7 +49,9 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
         return;
       }
 
-      final usuarioActualizado = await UsuarioService.obtenerUsuario(user.email);
+      final usuarioActualizado = await UsuarioService.obtenerUsuario(
+        user.email,
+      );
 
       if (mounted) {
         setState(() {
@@ -63,85 +65,83 @@ class _ProfilleVisualizerState extends State<ProfilleVisualizer> {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al cargar datos: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al cargar datos: $e')));
       }
     }
   }
 
   // Selecciona foto desde la galeria
   Future<void> _seleccionarFoto() async {
-  if (_isPickerActive) return;
+    if (_isPickerActive) return;
 
-  setState(() => _isPickerActive = true);
-  try {
-    final XFile? imagen = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
+    setState(() => _isPickerActive = true);
+    try {
+      final XFile? imagen = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
 
-    if (imagen != null) {
-      final user = AuthService.currentUser;
-      await UsuarioService.actualizarFotoPerfil(user!.email, imagen.path);
+      if (imagen != null) {
+        final user = AuthService.currentUser;
+        await UsuarioService.actualizarFotoPerfil(user!.email, imagen.path);
+        if (mounted) {
+          setState(() => _fotoPerfil = imagen.path);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Foto de perfil actualizada')),
+          );
+        }
+      }
+    } catch (e) {
       if (mounted) {
-        setState(() => _fotoPerfil = imagen.path);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Foto de perfil actualizada')),
+          const SnackBar(content: Text('Error al seleccionar la imagen')),
         );
       }
-    }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al seleccionar la imagen')),
-      );
-    }
-  } finally {
-    if (mounted) {
-      setState(() => _isPickerActive = false);
+    } finally {
+      if (mounted) {
+        setState(() => _isPickerActive = false);
+      }
     }
   }
-}
 
-// Similar para _seleccionarFondoGaleria:
-Future<void> _seleccionarFondoGaleria() async {
-  if (_isPickerActive) return;
-  setState(() => _isPickerActive = true);
+  // Similar para _seleccionarFondoGaleria:
+  Future<void> _seleccionarFondoGaleria() async {
+    if (_isPickerActive) return;
+    setState(() => _isPickerActive = true);
 
-  try {
-    final XFile? imagen = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
+    try {
+      final XFile? imagen = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
 
-    if (imagen != null) {
-      final user = AuthService.currentUser;
-      await UsuarioService.actualizarFondoPerfil(user!.email, imagen.path);
-      if (mounted) {
-        setState(() => _fondoPerfil = imagen.path);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fondo de perfil actualizado')),
-        );
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted && Navigator.canPop(context)) {
+      if (imagen != null) {
+        final user = AuthService.currentUser;
+        await UsuarioService.actualizarFondoPerfil(user!.email, imagen.path);
+        if (mounted) {
+          setState(() => _fondoPerfil = imagen.path);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fondo de perfil actualizado')),
+          );
+          if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-        });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al seleccionar la imagen')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPickerActive = false);
       }
     }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al seleccionar la imagen')),
-      );
-    }
-  } finally {
-    if (mounted) {
-      setState(() => _isPickerActive = false);
-    }
   }
-}
 
   // seleccionador de fondos
   void _mostrarSelectorFondos() {
@@ -157,26 +157,33 @@ Future<void> _seleccionarFondoGaleria() async {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Elige un fondo',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text(
+                'Elige un fondo',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 height: 120,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _fondos.length + 1,
-                  separatorBuilder: (context, index) => const SizedBox(width: 10),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 10),
                   itemBuilder: (context, index) {
                     // OPCIÓN: GALERÍA (PERSONALIZADO)
                     if (index == _fondos.length) {
                       return GestureDetector(
-                        onTap: _isPickerActive ? null : () => _seleccionarFondoGaleria(),
+                        onTap: _isPickerActive
+                            ? null
+                            : () => _seleccionarFondoGaleria(),
                         child: Container(
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: _isPickerActive ? Colors.grey : Colors.deepPurple,
+                              color: _isPickerActive
+                                  ? Colors.grey
+                                  : Colors.deepPurple,
                               width: 2,
                             ),
                           ),
@@ -186,13 +193,22 @@ Future<void> _seleccionarFondoGaleria() async {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.add_a_photo,
-                                      size: 30,
-                                      color: _isPickerActive ? Colors.grey : Colors.deepPurple),
+                                  Icon(
+                                    Icons.add_a_photo,
+                                    size: 30,
+                                    color: _isPickerActive
+                                        ? Colors.grey
+                                        : Colors.deepPurple,
+                                  ),
                                   const SizedBox(height: 5),
-                                  const Text('Galería',
-                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center),
+                                  const Text(
+                                    'Galería',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ],
                               ),
                             ),
@@ -206,39 +222,52 @@ Future<void> _seleccionarFondoGaleria() async {
                     final seleccionado = fondo == _fondoPerfil;
 
                     return GestureDetector(
-                      onTap: _isPickerActive ? null : () async {
-                        final user = AuthService.currentUser;
-                        if (user == null) return;
+                      onTap: _isPickerActive
+                          ? null
+                          : () async {
+                              final user = AuthService.currentUser;
+                              if (user == null) return;
 
-                        setState(() => _isPickerActive = true);
+                              setState(() => _isPickerActive = true);
 
-                        try {
-                          await UsuarioService.actualizarFondoPerfil(user.email, fondo);
-                          if (ctx.mounted) {
-                            setState(() => _fondoPerfil = fondo);
-                            ScaffoldMessenger.of(ctx).showSnackBar(
-                              const SnackBar(content: Text('Fondo actualizado')),
-                            );
-                            if (Navigator.canPop(ctx)) Navigator.pop(ctx);
-                          }
-                        } catch (e) {
-                          if (ctx.mounted) {
-                            ScaffoldMessenger.of(ctx).showSnackBar(
-                              SnackBar(content: Text('Error al actualizar fondo: $e')),
-                            );
-                          }
-                        } finally {
-                          if (mounted) {
-                            setState(() => _isPickerActive = false);
-                          }
-                        }
-                      },
+                              try {
+                                await UsuarioService.actualizarFondoPerfil(
+                                  user.email,
+                                  fondo,
+                                );
+                                if (ctx.mounted) {
+                                  setState(() => _fondoPerfil = fondo);
+                                  ScaffoldMessenger.of(ctx).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Fondo actualizado'),
+                                    ),
+                                  );
+                                  if (Navigator.canPop(ctx)) Navigator.pop(ctx);
+                                }
+                              } catch (e) {
+                                if (ctx.mounted) {
+                                  ScaffoldMessenger.of(ctx).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Error al actualizar fondo: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } finally {
+                                if (mounted) {
+                                  setState(() => _isPickerActive = false);
+                                }
+                              }
+                            },
                       child: Container(
                         width: 100,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: seleccionado ? Colors.deepPurple : Colors.transparent,
+                            color: seleccionado
+                                ? Colors.deepPurple
+                                : Colors.transparent,
                             width: 3,
                           ),
                         ),
@@ -300,7 +329,12 @@ Future<void> _seleccionarFondoGaleria() async {
     // Si es una ruta de archivo local
     final file = File(_fondoPerfil!);
     if (file.existsSync()) {
-      return Image.file(file, width: double.infinity, height: 250, fit: BoxFit.cover);
+      return Image.file(
+        file,
+        width: double.infinity,
+        height: 250,
+        fit: BoxFit.cover,
+      );
     } else {
       // Si el archivo no existe, mostrar fondo por defecto
       return Container(
@@ -317,7 +351,8 @@ Future<void> _seleccionarFondoGaleria() async {
     if (_fotoPerfil == null || _fotoPerfil!.isEmpty) {
       // Foto por defecto
       return const NetworkImage(
-          'https://i.pinimg.com/1200x/80/ab/ae/80abaeeea9d3a1a161d3ff7067cef58a.jpg');
+        'https://i.pinimg.com/1200x/80/ab/ae/80abaeeea9d3a1a161d3ff7067cef58a.jpg',
+      );
     }
 
     // Si es una ruta de archivo local
@@ -328,7 +363,8 @@ Future<void> _seleccionarFondoGaleria() async {
       } else {
         // Si el archivo no existe, retornar foto por defecto
         return const NetworkImage(
-            'https://i.pinimg.com/1200x/83/6a/44/836a44d9f9362d4a993fe023c2f3cd50.jpg');
+          'https://i.pinimg.com/1200x/83/6a/44/836a44d9f9362d4a993fe023c2f3cd50.jpg',
+        );
       }
     }
 
@@ -352,9 +388,7 @@ Future<void> _seleccionarFondoGaleria() async {
 
     // Mostrar indicador de carga mientras se cargan los datos
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -425,7 +459,11 @@ Future<void> _seleccionarFondoGaleria() async {
                           mini: true,
                           backgroundColor: Colors.deepPurple,
                           onPressed: _seleccionarFoto,
-                          child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
@@ -441,7 +479,10 @@ Future<void> _seleccionarFondoGaleria() async {
                 child: Center(
                   child: Text(
                     user.name,
-                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -462,6 +503,45 @@ Future<void> _seleccionarFondoGaleria() async {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Información de la aplicación',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Esta aplicación es una práctica de Flutter basada venta de productos.',
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Desarrollada por Geiler Caracas y Juan Diego Barona.',
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        child: const Icon(Icons.info_outline),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
@@ -472,7 +552,12 @@ class BottomCurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     path.lineTo(0, size.height - 30);
-    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height - 30);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 30,
+    );
     path.lineTo(size.width, 0);
     path.close();
     return path;
